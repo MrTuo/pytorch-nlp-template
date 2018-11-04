@@ -1,0 +1,67 @@
+{
+    "name": "Answer_selection",
+    "n_gpu": 2,
+    
+    "arch": {
+        "type": "WikiqaModel",
+        "args": {
+          "rnn_hidden": 200,
+          "rnn_layers": 1,
+          "linear_hidden": 200,
+          "bidirectional": true,
+          "cuda_able": true
+        }
+    },
+    "data_loader": {
+        "type": "WikiqaDataLoader",
+        "args":{
+            "data_path": "./data/",
+            "train_batch_size": 64,
+            "eval_batch_size": 128,
+            "train_file": "WikiQA-train-preprocessed.tsv",
+            "eval_file": "WikiQA-dev.tsv",
+            "test_file": "WikiQA-test.tsv",
+            "pretrain_ebd_file": "glove.840B.300d.txt",
+            "shuffle": true,
+            "lower": true
+        }
+    },
+    "optimizer": {
+        "type": "Adam",
+        "args":{
+            "lr": 0.001,
+            "weight_decay": 0,
+            "amsgrad": true
+        }
+    },
+    "loss": {
+        "type":"hinge_loss",
+        "t0":0.5
+    },
+    "metrics": [
+        "MAP"
+    ],
+    "lr_scheduler": {
+        "type":"StepLR",
+        "args":{
+            "step_size":50,
+            "gamma":0.1
+        }
+    },
+    "trainer": {
+        "epochs": 100,
+        "save_dir": "./data/saved/",
+        "save_freq": 1,
+        "verbosity": 1,
+        "monitor": "val_map",
+        "monitor_mode": "max"
+    },
+    "visualization":{
+        "tensorboardX": true,
+        "log_dir": "./saved/runs"
+    },
+    "vocabulary":{
+        "pretrain_embedding": true,
+        "embedding_path": "./data/glove.840B.300d.txt"
+    }
+}
